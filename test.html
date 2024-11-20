@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Images from hhnhh.github.io</title>
+</head>
+<body>
+    <h1>Images from hhnhh.github.io</h1>
+
+    <div id="image-container">
+        <!-- Images will be inserted here -->
+    </div>
+
+    <script>
+        // GitHub repository information
+        const username = 'hhnhh';  // GitHub username (or organization)
+        const repo = 'hhnhh.github.io';  // Repository name
+        const path = '';  // Path is empty because images are in the root folder
+
+        // GitHub API URL to get contents of the root folder
+        const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${path}`;
+
+        // Function to fetch image files and display them
+        async function fetchAndDisplayImages() {
+            try {
+                // Fetch the list of files from the GitHub repository
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                // Check if the response is valid and contains files
+                if (Array.isArray(data)) {
+                    // Filter out image files based on their extensions
+                    const imageFiles = data.filter(file => 
+                        /\.(jpg|jpeg|png|gif|bmp|svg)$/i.test(file.name)
+                    );
+
+                    const container = document.getElementById("image-container");
+
+                    // Loop through each image file and add an <img> element to the container
+                    imageFiles.forEach(file => {
+                        const img = document.createElement("img");
+                        img.src = file.download_url; // GitHub provides a "download_url" for raw files
+                        img.alt = file.name;
+                        img.style.width = "300px"; // Optional: set width for images
+                        img.style.margin = "10px"; // Optional: margin for spacing
+                        container.appendChild(img);
+                    });
+
+                    if (imageFiles.length === 0) {
+                        container.innerHTML = "<p>No images found in the repository.</p>";
+                    }
+                } else {
+                    console.error('Error: Invalid response or no files found.');
+                    document.getElementById('image-container').innerHTML = "<p>Error fetching files.</p>";
+                }
+            } catch (error) {
+                console.error('Error fetching images:', error);
+                document.getElementById('image-container').innerHTML = "<p>Error fetching images.</p>";
+            }
+        }
+
+        // Call the function to fetch and display images
+        fetchAndDisplayImages();
+    </script>
+</body>
+</html>
