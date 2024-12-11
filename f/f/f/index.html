@@ -12,9 +12,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
+            justify-content: flex-start;  /* Adjusted to top-align content */
+            min-height: 100vh;
             background-color: #f4f4f4;
+            overflow-x: hidden;  /* Prevent horizontal scrolling */
         }
 
         h1 {
@@ -27,6 +28,9 @@
             gap: 10px;
             justify-content: center;
             margin-top: 20px;
+            width: 100%;  /* Ensure full width for mobile */
+            padding-bottom: 10px;
+            box-sizing: border-box;
         }
 
         .image-item {
@@ -35,11 +39,17 @@
             background-color: white;
             text-align: center;
             max-width: 200px;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 0;
+            flex: 1 1 200px;  /* Adjust images to wrap properly */
         }
 
         .image-item img {
             width: 100%;
             height: auto;
+            max-height: 200px; /* Prevent images from becoming too large */
+            object-fit: contain;  /* Ensure images are not stretched */
         }
 
         .filename {
@@ -57,10 +67,33 @@
             color: white;
             border: none;
             border-radius: 5px;
+            max-width: 200px;  /* Limit button width */
+            width: 100%;  /* Make buttons responsive */
         }
 
         button:hover {
             background-color: #0056b3;
+        }
+
+        /* Add responsiveness for smaller screens */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 20px;
+            }
+
+            button {
+                font-size: 14px;  /* Reduce button size on mobile */
+                padding: 8px 16px;
+            }
+
+            #image-container {
+                gap: 5px;  /* Reduce the space between images on smaller screens */
+            }
+
+            .image-item {
+                max-width: 100%;  /* Allow images to take up full width on small screens */
+                flex: 1 1 100%;
+            }
         }
     </style>
 </head>
@@ -125,34 +158,4 @@
             container.innerHTML = ''; // Clear existing images
 
             if (imageFiles.length > 0) {
-                imageFiles.forEach(file => {
-                    const imageItem = document.createElement("div");
-                    imageItem.classList.add("image-item");
-
-                    const img = document.createElement("img");
-                    img.src = file.download_url; // GitHub provides a "download_url" for raw files
-                    img.alt = file.name;
-
-                    const filename = document.createElement("p");
-                    filename.classList.add("filename");
-                    filename.textContent = file.name;
-
-                    imageItem.appendChild(img);
-                    imageItem.appendChild(filename);
-                    container.appendChild(imageItem);
-                });
-            } else {
-                container.innerHTML = "<p>No images found in the repository.</p>";
-            }
-        }
-
-        // Add event listeners to the buttons
-        document.getElementById("sort-alphabetically").addEventListener('click', () => fetchAndDisplayImages('alphabetical'));
-        document.getElementById("sort-recently").addEventListener('click', () => fetchAndDisplayImages('recent'));
-
-        // Initial fetch and display images sorted alphabetically
-        fetchAndDisplayImages('alphabetical');
-    </script>
-
-</body>
-</html>
+                imag
