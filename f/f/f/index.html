@@ -12,10 +12,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;  /* Adjusted to top-align content */
+            justify-content: flex-start;
             min-height: 100vh;
             background-color: #f4f4f4;
-            overflow-x: hidden;  /* Prevent horizontal scrolling */
+            overflow-x: hidden;
         }
 
         h1 {
@@ -28,7 +28,7 @@
             gap: 10px;
             justify-content: center;
             margin-top: 20px;
-            width: 100%;  /* Ensure full width for mobile */
+            width: 100%;
             padding-bottom: 10px;
             box-sizing: border-box;
         }
@@ -42,14 +42,14 @@
             width: 100%;
             box-sizing: border-box;
             margin: 0;
-            flex: 1 1 200px;  /* Adjust images to wrap properly */
+            flex: 1 1 200px;
         }
 
         .image-item img {
             width: 100%;
             height: auto;
-            max-height: 200px; /* Prevent images from becoming too large */
-            object-fit: contain;  /* Ensure images are not stretched */
+            max-height: 200px;
+            object-fit: contain;
         }
 
         .filename {
@@ -67,31 +67,30 @@
             color: white;
             border: none;
             border-radius: 5px;
-            max-width: 200px;  /* Limit button width */
-            width: 100%;  /* Make buttons responsive */
+            max-width: 200px;
+            width: 100%;
         }
 
         button:hover {
             background-color: #0056b3;
         }
 
-        /* Add responsiveness for smaller screens */
         @media (max-width: 768px) {
             h1 {
                 font-size: 20px;
             }
 
             button {
-                font-size: 14px;  /* Reduce button size on mobile */
+                font-size: 14px;
                 padding: 8px 16px;
             }
 
             #image-container {
-                gap: 5px;  /* Reduce the space between images on smaller screens */
+                gap: 5px;
             }
 
             .image-item {
-                max-width: 100%;  /* Allow images to take up full width on small screens */
+                max-width: 100%;
                 flex: 1 1 100%;
             }
         }
@@ -101,43 +100,32 @@
 
     <h1>GitHub Image Gallery</h1>
 
-    <!-- Sorting buttons -->
     <button id="sort-alphabetically">Sort Alphabetically</button>
     <button id="sort-recently">Sort by Recently Uploaded</button>
 
-    <!-- Container for displaying images -->
     <div id="image-container"></div>
 
     <script>
-        // GitHub repository information
-        const username = 'hhnhh';  // GitHub username (or organization)
-        const repo = 'hhnhh.github.io';  // Repository name
-        const path = '';  // Path is empty because images are in the root folder
+        const username = 'hhnhh';
+        const repo = 'hhnhh.github.io';
+        const path = ''; // Path is empty because images are in the root folder
 
-        // GitHub API URL to get contents of the root folder
         const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${path}`;
+        let imageFiles = [];
 
-        let imageFiles = []; // Array to hold the image files
-
-        // Function to fetch image files and display them
         async function fetchAndDisplayImages(sortBy = 'alphabetical') {
             try {
-                // Fetch the list of files from the GitHub repository
                 const response = await fetch(apiUrl);
                 const data = await response.json();
 
-                // Check if the response is valid and contains files
                 if (Array.isArray(data)) {
-                    // Filter out image files based on their extensions
                     imageFiles = data.filter(file => 
                         /\.(jpg|jpeg|png|gif|bmp|svg)$/i.test(file.name)
                     );
 
-                    // Sort images based on the selected sort type
                     if (sortBy === 'alphabetical') {
                         imageFiles.sort((a, b) => a.name.localeCompare(b.name));
                     } else if (sortBy === 'recent') {
-                        // Sort images by created_at in descending order (most recent first)
                         imageFiles.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
                     }
 
@@ -152,10 +140,4 @@
             }
         }
 
-        // Function to display the images in the container
-        function displayImages() {
-            const container = document.getElementById("image-container");
-            container.innerHTML = ''; // Clear existing images
-
-            if (imageFiles.length > 0) {
-                imag
+        function displayImage
