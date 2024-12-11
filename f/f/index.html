@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Images from hhnhh.github.io</title>
+    <style>
+        button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #image-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .image-item {
+            margin: 10px;
+            text-align: center;
+        }
+        img {
+            width: 300px;
+        }
+        .filename {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>Images from hhnhh.github.io</h1>
+
+    <div>
+        <button id="sort-alphabetically">Sort Alphabetically</button>
+        <button id="sort-recently">Sort by Most Recent</button>
+    </div>
+
+    <div id="image-container">
+        <!-- Images will be inserted here -->
+    </div>
+
+    <script>
+        // GitHub repository information
+        const username = 'hhnhh';  // GitHub username (or organization)
+        const repo = 'hhnhh.github.io';  // Repository name
+        const path = '';  // Path is empty because images are in the root folder
+
+        // GitHub API URL to get contents of the root folder
+        const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${path}`;
+
+        let imageFiles = []; // Array to hold the image files
+
+        // Function to fetch image files and display them
+        async function fetchAndDisplayImages(sortBy = 'alphabetical') {
+            try {
+                // Fetch the list of files from the GitHub repository
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                // Check if the response is valid and contains files
+                if (Array.isArray(data)) {
+                    // Filter out image files based on their extensions
+                    imageFiles = data.filter(file => 
+                        /\.(jpg|jpeg|png|gif|bmp|svg)$/i.test(file.name)
+                    );
+
+                    // Sort images based on the selected sort type
+                    if (sortBy === 'alphabetical') {
+                        imageFiles.sort((a, b) => a.name.localeCompare(b.name));
+                    } else if (sortBy === 'recent') {
+                        imageFiles.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                    }
+
+                    displayImages();
+                } else {
+                    console.error('Error: Invalid response or no files found.');
+                    document.getElementById('image-container').innerHTML = "<p>Error fetching files.</p>";
+                }
+            } catch (error) {
+                console.error('Error fetching images:', error);
+                document.getElementById('image-container').innerHTML = "<p>Error fetching images.</p>";
+            }
+        }
+
+        // Function to display the images in the container
+        function displayImages() {
+            const container = document.getElementById("image-container");
+            container.innerHTML = ''; // Clear existing images
+
+            if (imageFiles.length > 0) {
+                imageFiles.forEach(file => {
+                    const imageItem = document.createElement("div");
+                    imageItem.classList.add("image-item");
+
+                    const img = document.createElement("img");
+                    img.src = file.download_url; // GitHub provides a "download_url" for raw files
+                    img.alt = file.name;
+
+                    const filename = document.createElement("p");
+                    filename.classList.add("filename");
+                    filename.textContent = file.name;
+
+                    imageItem.appendChild(img);
+                    imageItem.appendChild(filename);
+                    container.appendChild(imageItem);
+                });
+            } else {
+                container.innerHTML = "<p>No images found in the repository.</p>";
+            }
+        }
+
+        // Add event listeners to the buttons
+        document.getElementById("sort-alphabetically").addEventListener('click', () => fetchAndDisplayImages('alphabetical'));
+        document.getElementById("sort-recently").addEventListener('click', () => fetchAndDisplayImages('recent'));
+
+        // Initial fetch and display images sorted alphabetically
+        fetchAndDisplayImages('alphabetical');
+    </script>
+</body>
+</html>
